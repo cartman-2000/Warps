@@ -49,14 +49,14 @@ namespace Warps
         {
             if (name == null)
             {
-                return WarpsData.Values.ToList();
+                return WarpsData.Values.OrderBy(warp => warp.Name).ToList();
             }
-            return WarpsData.Values.Where(warpData => warpData.Name.Contains(name.ToLower()) && warpData.World.ToLower() == Warps.MapName).ToList();
+            return WarpsData.Values.Where(warpData => warpData.Name.Contains(name.ToLower()) && warpData.World.ToLower() == Warps.MapName).OrderBy(warp => warp.Name).ToList();
         }
 
         public List<Warp> SearchWarps(CSteamID cSteamID)
         {
-            return WarpsData.Values.Where(warpData => warpData.SetterCSteamID == cSteamID && warpData.World.ToLower() == Warps.MapName).ToList();
+            return WarpsData.Values.Where(warpData => warpData.SetterCSteamID == cSteamID && warpData.World.ToLower() == Warps.MapName).OrderBy(warp => warp.Name).ToList();
         }
 
         public Warp GetWarp(string name)
