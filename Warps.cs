@@ -45,6 +45,7 @@ namespace Warps
                     { "player_warp", "You have been teleported to warp: {0}." },
                     { "warp_cant_find_player", "Error: Cant find the player to warp." },
                     { "warp_cant_find_warp", "Error: A warp by the name of {0}, wasn't found." },
+                    { "warp_cant_warp_in_car", "Error: Can't warp, player is in a car." },
                     { "warp_other_not_allowed", "Error: Warping other players not allowed." },
                     { "warp_console_no_player", "Error: Can't use warp command without a player from the console." },
                     { "setwarp_set", "Warp has been set." },

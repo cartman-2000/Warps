@@ -59,6 +59,11 @@ namespace Warps
                 {
                     if (unturnedTarget != null && (caller.HasPermission("warp.other") || SteamAdminlist.checkAdmin(caller is ConsolePlayer ? CSteamID.Nil : (CSteamID)ulong.Parse(caller.Id))))
                     {
+                        if (unturnedTarget.Stance == EPlayerStance.DRIVING || unturnedTarget.Stance == EPlayerStance.SITTING)
+                        {
+                            UnturnedChat.Say(caller, Warps.Instance.Translate("warp_cant_warp_in_car"));
+                            return;
+                        }
                         unturnedTarget.Teleport(warp.Location, warp.Rotation);
                         UnturnedChat.Say(caller, Warps.Instance.Translate("admin_warp", unturnedTarget.CharacterName, warp.Name));
                         Logger.Log(Warps.Instance.Translate("admin_warp_log", caller.DisplayName, caller.Id, unturnedTarget.CharacterName, warp.Name));
@@ -83,6 +88,11 @@ namespace Warps
                     else
                     {
                         UnturnedPlayer unturnedCaller = (UnturnedPlayer)caller;
+                        if (unturnedCaller.Stance == EPlayerStance.DRIVING || unturnedCaller.Stance == EPlayerStance.SITTING)
+                        {
+                            UnturnedChat.Say(caller, Warps.Instance.Translate("warp_cant_warp_in_car"));
+                            return;
+                        }
                         unturnedCaller.Teleport(warp.Location, warp.Rotation);
                         UnturnedChat.Say(caller, Warps.Instance.Translate("player_warp", warp.Name));
                         return;
