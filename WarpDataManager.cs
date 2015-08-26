@@ -41,7 +41,7 @@ namespace Warps
         {
             // Save the warps out to the config file.
             Warps.Instance.Configuration.Instance.Warps = WarpsData.Values.ToList();
-            Warps.Instance.Configuration.Save(Warps.Instance.Configuration.Instance);
+            Warps.Instance.Configuration.Save();
 
         }
 
