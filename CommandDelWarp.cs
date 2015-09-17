@@ -57,6 +57,10 @@ namespace Warps
                 }
                 else
                 {
+                    if (Warps.CheckUconomy())
+                        if (Warps.Instance.Configuration.Instance.DelWarpChargeEnable && Warps.Instance.Configuration.Instance.DelWarpCost > 0.00m)
+                            if (!Warps.TryCharge(caller, Warps.Instance.Configuration.Instance.DelWarpCost))
+                                return;
                     Warps.warpsData.RemoveWarp(command[0]);
                     UnturnedChat.Say(caller, Warps.Instance.Translate("delwarp_removed"));
                     return;

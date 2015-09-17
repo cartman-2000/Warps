@@ -1,11 +1,11 @@
-﻿using Rocket.API.Collections;
+﻿using Rocket.API;
+using Rocket.API.Collections;
 using Rocket.Core.Logging;
 using Rocket.Core.Plugins;
+using Rocket.Unturned.Chat;
 using SDG.Unturned;
-using Steamworks;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using unturned.ROCKS.Uconomy;
 
 namespace Warps
 {
@@ -22,11 +22,63 @@ namespace Warps
             {
                 warpsData = new WarpDataManager();
             }
+            Instance.Configuration.Save();
         }
 
         protected override void Unload()
         {
             warpsData.Unload();
+        }
+
+        internal static bool CheckUconomy()
+        {
+            if (Instance.Configuration.Instance.UconomyEnable)
+            {
+                if (Type.GetType("unturned.ROCKS.Uconomy.DatabaseManager,Uconomy") != null)
+                {
+                    return true;
+                }
+                Logger.LogWarning("Warps: Error: Uconomy plugin wasn't found on the server.");
+            }
+            return false;
+        }
+
+        internal static bool TryCharge(IRocketPlayer player, decimal ammount)
+        {
+            if (Uconomy.Instance.State == PluginState.Loaded)
+            {
+                try
+                {
+                    if (player.HasPermission("warpcharge.overide") || player is ConsolePlayer)
+                        return true;
+                    decimal balance = Uconomy.Instance.Database.GetBalance(player.Id);
+                    if (balance < ammount)
+                        UnturnedChat.Say(player, Instance.Translate("insufficient_funds", Uconomy.Instance.Configuration.Instance.MoneyName));
+                    else
+                    {
+                        if (Uconomy.Instance.Database.IncreaseBalance(player.Id, -ammount) < 1)
+                        {
+                            Logger.LogWarning("Warps: Error: Wasn't able to set the player balance.");
+                        }
+                        else
+                        {
+                            UnturnedChat.Say(player, Instance.Translate("charge_success", ammount, Uconomy.Instance.Configuration.Instance.MoneyName, balance - ammount, Uconomy.Instance.Configuration.Instance.MoneyName));
+                            return true;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogException(ex, "Warps: Error: There was an error trying to charge the player.");
+                    return true;
+                }
+            }
+            else
+            {
+                Logger.LogWarning("Warps: Error: The Uconomy plugin isn't enabled.");
+                return true;
+            }
+            return false;
         }
 
         public override TranslationList DefaultTranslations
@@ -54,7 +106,9 @@ namespace Warps
                     { "delwarp_not_found", "Error: A warp by that name doesn't exist." },
                     { "warps_none_found", "Error: Sorry, there were no records found."},
                     { "warps_list_header", "List of warps, There are {0} warps set."},
-                    { "warps_list", "Warps: {0}."}
+                    { "warps_list", "Warps: {0}."},
+                    { "insufficient_funds", "Error: You don't have enough {0}s to use this command." },
+                    { "charge_success", "You have been charged {0} {1}s, your balance is now {2} {3}s." }
                 };
             }
         }

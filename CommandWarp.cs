@@ -64,6 +64,10 @@ namespace Warps
                             UnturnedChat.Say(caller, Warps.Instance.Translate("warp_cant_warp_in_car"));
                             return;
                         }
+                        if (Warps.CheckUconomy())
+                            if (Warps.Instance.Configuration.Instance.WarpOtherChargeEnable && Warps.Instance.Configuration.Instance.WarpOtherCost > 0.00m)
+                                if (!Warps.TryCharge(caller, Warps.Instance.Configuration.Instance.WarpOtherCost))
+                                    return;
                         unturnedTarget.Teleport(warp.Location, warp.Rotation);
                         UnturnedChat.Say(caller, Warps.Instance.Translate("admin_warp", unturnedTarget.CharacterName, warp.Name));
                         Logger.Log(Warps.Instance.Translate("admin_warp_log", caller.DisplayName, caller.Id, unturnedTarget.CharacterName, warp.Name));
@@ -93,6 +97,10 @@ namespace Warps
                             UnturnedChat.Say(caller, Warps.Instance.Translate("warp_cant_warp_in_car"));
                             return;
                         }
+                        if (Warps.CheckUconomy())
+                            if (Warps.Instance.Configuration.Instance.WarpCargeEnable && Warps.Instance.Configuration.Instance.WarpCost > 0.00m)
+                                if (!Warps.TryCharge(caller, Warps.Instance.Configuration.Instance.WarpCost))
+                                    return;
                         unturnedCaller.Teleport(warp.Location, warp.Rotation);
                         UnturnedChat.Say(caller, Warps.Instance.Translate("player_warp", warp.Name));
                         return;

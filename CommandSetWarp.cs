@@ -66,6 +66,10 @@ namespace Warps
                 warpData.Rotation = unturnedCaller.Rotation;
                 warpData.Location = unturnedCaller.Position;
 
+                if (Warps.CheckUconomy())
+                    if (Warps.Instance.Configuration.Instance.SetWarpChargeEnable && Warps.Instance.Configuration.Instance.SetWarpCost > 0.00m)
+                        if (!Warps.TryCharge(caller, Warps.Instance.Configuration.Instance.SetWarpCost))
+                            return;
                 if (Warps.warpsData.SetWarp(warpData))
                 {
                     UnturnedChat.Say(caller, Warps.Instance.Translate("setwarp_set"));
