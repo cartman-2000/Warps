@@ -74,6 +74,7 @@
     <Compile Include="CommandSetWarp.cs" />
     <Compile Include="CommandWarp.cs" />
     <Compile Include="CommandWarps.cs" />
+    <Compile Include="CommandDelWarpAll.cs" />
     <Compile Include="Warp.cs" />
     <Compile Include="WarpDataManager.cs" />
     <Compile Include="Warps.cs" />

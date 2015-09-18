@@ -49,7 +49,7 @@ namespace Warps
         {
             if (name == null)
             {
-                return WarpsData.Values.OrderBy(warp => warp.Name).ToList();
+                return WarpsData.Values.Where(warpData => warpData.World.ToLower() == Warps.MapName).OrderBy(warp => warp.Name).ToList();
             }
             return WarpsData.Values.Where(warpData => warpData.Name.Contains(name.ToLower()) && warpData.World.ToLower() == Warps.MapName).OrderBy(warp => warp.Name).ToList();
         }
@@ -92,6 +92,21 @@ namespace Warps
                 return true;
             }
             return false;
+        }
+
+        public int RemoveWarpAll(string mapName)
+        {
+            List<Warp> list = WarpsData.Values.Where(warpData => warpData.World.ToLower() == mapName.ToLower()).ToList();
+            if (list.Count > 0)
+            {
+                foreach ( Warp entry in list)
+                {
+                    WarpsData.Remove(entry.World.ToLower() + "." + entry.Name.ToLower());
+                }
+                SaveWarps();
+                return list.Count;
+            }
+            return 0;
         }
 
         private static string WarpsKey(string name)
