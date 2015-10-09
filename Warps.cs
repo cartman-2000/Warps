@@ -13,7 +13,7 @@ namespace Warps
     {
         public static Warps Instance;
         internal static WarpDataManager warpsData;
-        public static readonly string MapName = Steam.map.ToLower();
+        public static readonly string MapName = Provider.map.ToLower();
 
         protected override void Load()
         {
