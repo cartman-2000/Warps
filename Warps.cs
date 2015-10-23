@@ -5,7 +5,7 @@ using Rocket.Core.Plugins;
 using Rocket.Unturned.Chat;
 using SDG.Unturned;
 using System;
-using unturned.ROCKS.Uconomy;
+using fr34kyn01535.Uconomy;
 
 namespace Warps
 {
@@ -34,7 +34,7 @@ namespace Warps
         {
             if (Instance.Configuration.Instance.UconomyEnable)
             {
-                if (Type.GetType("unturned.ROCKS.Uconomy.DatabaseManager,Uconomy") != null)
+                if (Type.GetType("fr34kyn01535.Uconomy.DatabaseManager,Uconomy") != null)
                 {
                     return true;
                 }
@@ -103,7 +103,7 @@ namespace Warps
                     { "warp_console_no_player", "Error: Can't use warp command without a player from the console." },
                     { "setwarp_set", "Warp has been set." },
                     { "setwarp_not_set", "Error: Wasn't able to set warp." },
-                    { "delwarp_removed", "Warp has been removed Removed." },
+                    { "delwarp_removed", "Warp has been removed." },
                     { "delwarp_not_found", "Error: A warp by that name doesn't exist." },
                     { "delwarpall_removed", "{0} warps with this map name have been removed." },
                     { "warps_none_found", "Error: Sorry, there were no records found."},
