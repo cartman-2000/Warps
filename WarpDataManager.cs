@@ -23,11 +23,27 @@ namespace Warps
             {
                 try
                 {
+                    // sanity checks for warps data.
+                    if (warpData.Name == null || warpData.Name == string.Empty)
+                    {
+                        Logger.LogWarning("Error: No warp name on record, Skipping!");
+                        continue;
+                    }
+                    if (warpData.SetterCharName == null)
+                        warpData.SetterCharName = "";
+                    if (warpData.SetterSteamName == null)
+                        warpData.SetterSteamName = "";
+                    if (warpData.World == null || warpData.World == string.Empty)
+                    {
+                        Logger.LogWarning("Error: No world set to record, Skipping!");
+                        continue;
+                    }
+
                     WarpsData.Add(warpData.World.ToLower() + "." + warpData.Name.ToLower(), warpData);
                 }
-                catch
+                catch (Exception ex)
                 {
-                    Logger.LogError("Error: Unable to load a warp record.");
+                    Logger.LogException(ex, "Error: Unable to load a warp record.");
                 }
             }
         }

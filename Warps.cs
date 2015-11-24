@@ -18,10 +18,7 @@ namespace Warps
         protected override void Load()
         {
             Instance = this;
-            if (Instance.Configuration.Instance.WarpsEnable)
-            {
-                warpsData = new WarpDataManager();
-            }
+            warpsData = new WarpDataManager();
             Instance.Configuration.Save();
         }
 
@@ -92,7 +89,6 @@ namespace Warps
                     { "delwarp_help", CommandDelWarp.syntax + " - " + CommandDelWarp.help },
                     { "delwarpall_help", CommandDelWarpAll.syntax + " - " + CommandDelWarpAll.help },
                     { "warps_help", CommandWarps.syntax + " - " + CommandWarps.help },
-                    { "warps_disabled", "Error: Warps arn't enabled on this server." },
                     { "admin_warp", "You have teleported player: {0}, to warp: {1}." },
                     { "admin_warp_log", "Admin: {0}({1}), has teleported player: {2}, to warp:{3}" },
                     { "player_warp", "You have been teleported to warp: {0}." },

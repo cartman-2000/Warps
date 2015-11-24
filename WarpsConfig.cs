@@ -6,36 +6,19 @@ namespace Warps
 {
     public class WarpsConfig : IRocketPluginConfiguration
     {
-        public bool WarpsEnable;
-
-        public bool UconomyEnable;
-        public bool WarpCargeEnable;
-        public decimal WarpCost;
-        public bool WarpOtherChargeEnable;
-        public decimal WarpOtherCost;
-        public bool SetWarpChargeEnable;
-        public decimal SetWarpCost;
-        public bool DelWarpChargeEnable;
-        public decimal DelWarpCost;
+        public bool UconomyEnable = false;
+        public bool WarpCargeEnable = true;
+        public decimal WarpCost = 100.00m;
+        public bool WarpOtherChargeEnable = false;
+        public decimal WarpOtherCost = 200.00m;
+        public bool SetWarpChargeEnable = false;
+        public decimal SetWarpCost = 200.00m;
+        public bool DelWarpChargeEnable = false;
+        public decimal DelWarpCost = 200.00m;
 
         [XmlArray("Warps"), XmlArrayItem(ElementName = "Warp")]
-        public List<Warp> Warps;
+        public List<Warp> Warps = new List<Warp>();
 
-        public void LoadDefaults()
-        {
-            WarpsEnable = true;
-
-            UconomyEnable = false;
-            WarpCargeEnable = true;
-            WarpCost = 100.00m;
-            WarpOtherChargeEnable = false;
-            WarpOtherCost = 200.00m;
-            SetWarpChargeEnable = false;
-            SetWarpCost = 200.00m;
-            DelWarpChargeEnable = false;
-            DelWarpCost = 200.00m;
-
-            Warps = new List<Warp>();
-        }
+        public void LoadDefaults() {}
     }
 }

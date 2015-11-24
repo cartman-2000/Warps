@@ -42,48 +42,40 @@ namespace Warps
 
         public void Execute(IRocketPlayer caller, string[] command)
         {
-            if (Warps.Instance.Configuration.Instance.WarpsEnable)
+            if (command.Length == 0 || command.Length > 1)
             {
-                if (command.Length == 0 || command.Length > 1)
-                {
-                    UnturnedChat.Say(caller, Warps.Instance.Translate("setwarp_help"));
-                    return;
-                }
-                string warpName = command[0].Trim();
-                if (warpName == string.Empty)
-                {
-                    UnturnedChat.Say(caller, Warps.Instance.Translate("setwarp_not_set"));
-                    return;
-                }
+                UnturnedChat.Say(caller, Warps.Instance.Translate("setwarp_help"));
+                return;
+            }
+            string warpName = command[0].Sanitze().Trim();
+            if (warpName == string.Empty)
+            {
+                UnturnedChat.Say(caller, Warps.Instance.Translate("setwarp_not_set"));
+                return;
+            }
 
-                Warp warpData = new Warp();
-                UnturnedPlayer unturnedCaller = (UnturnedPlayer)caller;
-                warpData.Name = warpName;
-                warpData.SetterCharName = unturnedCaller.CharacterName;
-                warpData.SetterSteamName = unturnedCaller.SteamName;
-                warpData.SetterCSteamID = unturnedCaller.CSteamID;
-                warpData.World = Warps.MapName;
-                warpData.Rotation = unturnedCaller.Rotation;
-                warpData.Location = unturnedCaller.Position;
+            Warp warpData = new Warp();
+            UnturnedPlayer unturnedCaller = (UnturnedPlayer)caller;
+            warpData.Name = warpName;
+            warpData.SetterCharName = unturnedCaller.CharacterName.Sanitze();
+            warpData.SetterSteamName = unturnedCaller.SteamName.Sanitze();
+            warpData.SetterCSteamID = unturnedCaller.CSteamID;
+            warpData.World = Warps.MapName;
+            warpData.Rotation = unturnedCaller.Rotation;
+            warpData.Location = unturnedCaller.Position;
 
-                if (Warps.CheckUconomy())
-                    if (Warps.Instance.Configuration.Instance.SetWarpChargeEnable && Warps.Instance.Configuration.Instance.SetWarpCost > 0.00m)
-                        if (!Warps.TryCharge(caller, Warps.Instance.Configuration.Instance.SetWarpCost))
-                            return;
-                if (Warps.warpsData.SetWarp(warpData))
-                {
-                    UnturnedChat.Say(caller, Warps.Instance.Translate("setwarp_set"));
-                    return;
-                }
-                else
-                {
-                    UnturnedChat.Say(caller, Warps.Instance.Translate("setwarp_not_set"));
-                    return;
-                }
+            if (Warps.CheckUconomy())
+                if (Warps.Instance.Configuration.Instance.SetWarpChargeEnable && Warps.Instance.Configuration.Instance.SetWarpCost > 0.00m)
+                    if (!Warps.TryCharge(caller, Warps.Instance.Configuration.Instance.SetWarpCost))
+                        return;
+            if (Warps.warpsData.SetWarp(warpData))
+            {
+                UnturnedChat.Say(caller, Warps.Instance.Translate("setwarp_set"));
+                return;
             }
             else
             {
-                UnturnedChat.Say(caller, Warps.Instance.Translate("warps_disabled"));
+                UnturnedChat.Say(caller, Warps.Instance.Translate("setwarp_not_set"));
                 return;
             }
         }

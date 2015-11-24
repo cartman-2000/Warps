@@ -46,75 +46,67 @@ namespace Warps
 
         public void Execute(IRocketPlayer caller, string[] command)
         {
-            if (Warps.Instance.Configuration.Instance.WarpsEnable)
+            if (command.Length == 0 || command.Length > 2)
             {
-                if (command.Length == 0 || command.Length > 2)
+                UnturnedChat.Say(caller, Warps.Instance.Translate("warp_help"));
+                return;
+            }
+            Warp warp = Warps.warpsData.GetWarp(command[0]);
+            UnturnedPlayer unturnedTarget = command.GetUnturnedPlayerParameter(1);
+            if (warp != null)
+            {
+                if (unturnedTarget != null && (caller.HasPermission("warp.other") || SteamAdminlist.checkAdmin(caller is ConsolePlayer ? CSteamID.Nil : (CSteamID)ulong.Parse(caller.Id))))
                 {
-                    UnturnedChat.Say(caller, Warps.Instance.Translate("warp_help"));
+                    if (unturnedTarget.Stance == EPlayerStance.DRIVING || unturnedTarget.Stance == EPlayerStance.SITTING)
+                    {
+                        UnturnedChat.Say(caller, Warps.Instance.Translate("warp_cant_warp_in_car"));
+                        return;
+                    }
+                    if (Warps.CheckUconomy())
+                        if (Warps.Instance.Configuration.Instance.WarpOtherChargeEnable && Warps.Instance.Configuration.Instance.WarpOtherCost > 0.00m)
+                            if (!Warps.TryCharge(caller, Warps.Instance.Configuration.Instance.WarpOtherCost))
+                                return;
+                    unturnedTarget.Teleport(warp.Location, warp.Rotation);
+                    UnturnedChat.Say(caller, Warps.Instance.Translate("admin_warp", unturnedTarget.CharacterName, warp.Name));
+                    Logger.Log(Warps.Instance.Translate("admin_warp_log", caller.DisplayName, caller.Id, unturnedTarget.CharacterName, warp.Name));
+                    UnturnedChat.Say(unturnedTarget, Warps.Instance.Translate("player_warp", warp.Name));
                     return;
                 }
-                Warp warp = Warps.warpsData.GetWarp(command[0]);
-                UnturnedPlayer unturnedTarget = command.GetUnturnedPlayerParameter(1);
-                if (warp != null)
+                else if (unturnedTarget != null)
                 {
-                    if (unturnedTarget != null && (caller.HasPermission("warp.other") || SteamAdminlist.checkAdmin(caller is ConsolePlayer ? CSteamID.Nil : (CSteamID)ulong.Parse(caller.Id))))
-                    {
-                        if (unturnedTarget.Stance == EPlayerStance.DRIVING || unturnedTarget.Stance == EPlayerStance.SITTING)
-                        {
-                            UnturnedChat.Say(caller, Warps.Instance.Translate("warp_cant_warp_in_car"));
-                            return;
-                        }
-                        if (Warps.CheckUconomy())
-                            if (Warps.Instance.Configuration.Instance.WarpOtherChargeEnable && Warps.Instance.Configuration.Instance.WarpOtherCost > 0.00m)
-                                if (!Warps.TryCharge(caller, Warps.Instance.Configuration.Instance.WarpOtherCost))
-                                    return;
-                        unturnedTarget.Teleport(warp.Location, warp.Rotation);
-                        UnturnedChat.Say(caller, Warps.Instance.Translate("admin_warp", unturnedTarget.CharacterName, warp.Name));
-                        Logger.Log(Warps.Instance.Translate("admin_warp_log", caller.DisplayName, caller.Id, unturnedTarget.CharacterName, warp.Name));
-                        UnturnedChat.Say(unturnedTarget, Warps.Instance.Translate("player_warp", warp.Name));
-                        return;
-                    }
-                    else if (unturnedTarget != null)
-                    {
-                        UnturnedChat.Say(caller, Warps.Instance.Translate("warp_other_not_allowed"));
-                        return;
-                    }
-                    if (unturnedTarget == null && command.Length == 2)
-                    {
-                        UnturnedChat.Say(caller, Warps.Instance.Translate("warp_cant_find_player"));
-                        return;
-                    }
-                    else if (caller is ConsolePlayer)
-                    {
-                        UnturnedChat.Say(caller, Warps.Instance.Translate("warp_console_no_player"));
-                        return;
-                    }
-                    else
-                    {
-                        UnturnedPlayer unturnedCaller = (UnturnedPlayer)caller;
-                        if (unturnedCaller.Stance == EPlayerStance.DRIVING || unturnedCaller.Stance == EPlayerStance.SITTING)
-                        {
-                            UnturnedChat.Say(caller, Warps.Instance.Translate("warp_cant_warp_in_car"));
-                            return;
-                        }
-                        if (Warps.CheckUconomy())
-                            if (Warps.Instance.Configuration.Instance.WarpCargeEnable && Warps.Instance.Configuration.Instance.WarpCost > 0.00m)
-                                if (!Warps.TryCharge(caller, Warps.Instance.Configuration.Instance.WarpCost))
-                                    return;
-                        unturnedCaller.Teleport(warp.Location, warp.Rotation);
-                        UnturnedChat.Say(caller, Warps.Instance.Translate("player_warp", warp.Name));
-                        return;
-                    }
+                    UnturnedChat.Say(caller, Warps.Instance.Translate("warp_other_not_allowed"));
+                    return;
+                }
+                if (unturnedTarget == null && command.Length == 2)
+                {
+                    UnturnedChat.Say(caller, Warps.Instance.Translate("warp_cant_find_player"));
+                    return;
+                }
+                else if (caller is ConsolePlayer)
+                {
+                    UnturnedChat.Say(caller, Warps.Instance.Translate("warp_console_no_player"));
+                    return;
                 }
                 else
                 {
-                    UnturnedChat.Say(caller, Warps.Instance.Translate("warp_cant_find_warp", command[0]));
+                    UnturnedPlayer unturnedCaller = (UnturnedPlayer)caller;
+                    if (unturnedCaller.Stance == EPlayerStance.DRIVING || unturnedCaller.Stance == EPlayerStance.SITTING)
+                    {
+                        UnturnedChat.Say(caller, Warps.Instance.Translate("warp_cant_warp_in_car"));
+                        return;
+                    }
+                    if (Warps.CheckUconomy())
+                        if (Warps.Instance.Configuration.Instance.WarpCargeEnable && Warps.Instance.Configuration.Instance.WarpCost > 0.00m)
+                            if (!Warps.TryCharge(caller, Warps.Instance.Configuration.Instance.WarpCost))
+                                return;
+                    unturnedCaller.Teleport(warp.Location, warp.Rotation);
+                    UnturnedChat.Say(caller, Warps.Instance.Translate("player_warp", warp.Name));
                     return;
                 }
             }
             else
             {
-                UnturnedChat.Say(caller, Warps.Instance.Translate("warps_disabled"));
+                UnturnedChat.Say(caller, Warps.Instance.Translate("warp_cant_find_warp", command[0]));
                 return;
             }
         }
