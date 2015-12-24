@@ -15,9 +15,9 @@ namespace Warps
             get { return new List<string>(); }
         }
 
-        public bool AllowFromConsole
+        public AllowedCaller AllowedCaller
         {
-            get { return false; }
+            get { return AllowedCaller.Player; }
         }
 
         public string Help

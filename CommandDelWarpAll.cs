@@ -7,15 +7,15 @@ namespace Warps
     public class CommandDelWarpAll : IRocketCommand
     {
         public static string help = "Deletes all warps from a specific map.";
-        public static string syntax = "<Map name>";
+        public static string syntax = "<\"Map name\">";
         public List<string> Aliases
         {
             get { return new List<string>(); }
         }
 
-        public bool AllowFromConsole
+        public AllowedCaller AllowedCaller
         {
-            get { return true; }
+            get { return AllowedCaller.Both; }
         }
 
         public string Help
