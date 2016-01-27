@@ -8,7 +8,7 @@ namespace Warps
 {
     public class WarpDataManager
     {
-        private static Dictionary<string, Warp> WarpsData = new Dictionary<string, Warp>();
+        private Dictionary<string, Warp> WarpsData = new Dictionary<string, Warp>();
 
 
         public WarpDataManager()
@@ -46,11 +46,6 @@ namespace Warps
                     Logger.LogException(ex, "Error: Unable to load a warp record.");
                 }
             }
-        }
-
-        public void Unload()
-        {
-            WarpsData.Clear();
         }
 
         private void SaveWarps()
@@ -125,7 +120,7 @@ namespace Warps
             return 0;
         }
 
-        private static string WarpsKey(string name)
+        private string WarpsKey(string name)
         {
             return Warps.MapName + "." + name.ToLower();
         }

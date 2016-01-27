@@ -1,5 +1,4 @@
 ﻿using Rocket.API;
-using Rocket.Unturned.Chat;
 using Rocket.Unturned.Commands;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,20 +45,20 @@ namespace Warps
             string name = command.GetStringParameter(0);
             if (name == "help")
             {
-                UnturnedChat.Say(caller, Warps.Instance.Translate("warps_help"));
+                Warps.RconPrint(caller, Warps.Instance.Translate("warps_help"));
                 return;
             }
             List<Warp> WarpsList = Warps.warpsData.SearchWarps(name);
 
             if (WarpsList.Count == 0)
             {
-                UnturnedChat.Say(caller, Warps.Instance.Translate("warps_none_found"));
+                Warps.RconPrint(caller, Warps.Instance.Translate("warps_none_found"));
                 return;
             }
             else
             {
-                UnturnedChat.Say(caller, Warps.Instance.Translate("warps_list_header", WarpsList.Count));
-                UnturnedChat.Say(caller, Warps.Instance.Translate("warps_list", string.Join(", ", WarpsList.Select(warp => warp.Name).ToArray())));
+                Warps.RconPrint(caller, Warps.Instance.Translate("warps_list_header", WarpsList.Count));
+                Warps.RconPrint(caller, Warps.Instance.Translate("warps_list", string.Join(", ", WarpsList.Select(warp => warp.Name).ToArray())));
             }
         }
     }

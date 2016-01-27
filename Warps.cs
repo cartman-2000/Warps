@@ -6,25 +6,53 @@ using Rocket.Unturned.Chat;
 using SDG.Unturned;
 using System;
 using fr34kyn01535.Uconomy;
+using System.Collections.Generic;
+using Rocket.Core.RCON;
 
 namespace Warps
 {
     public class Warps : RocketPlugin<WarpsConfig>
     {
         public static Warps Instance;
-        internal static WarpDataManager warpsData;
-        public static readonly string MapName = Provider.map.ToLower();
+        internal static WarpDataManager warpsData = null;
+        internal static readonly string MapName = Provider.map.ToLower();
+        internal Dictionary<string, float> WaitGroups = new Dictionary<string, float>();
 
         protected override void Load()
         {
             Instance = this;
             warpsData = new WarpDataManager();
+            // Populate Wait Groups.
+            if (Warps.Instance.Configuration.Instance.WaitGroups.Count == 0)
+            {
+                Instance.Configuration.Instance.WaitGroups = new List<WarpWaitGroups>()
+                {
+                    new WarpWaitGroups { GroupName = "default", WaitTime = 10 },
+                    new WarpWaitGroups { GroupName = "admin", WaitTime = 5 },
+                    new WarpWaitGroups { GroupName = "all", WaitTime = 10 }
+                };
+            }
+            foreach (WarpWaitGroups group in Instance.Configuration.Instance.WaitGroups)
+            {
+                if (!Instance.WaitGroups.ContainsKey(group.GroupName))
+                {
+                    if (group.WaitTime >= 0)
+                        Instance.WaitGroups.Add(group.GroupName, group.WaitTime);
+                    else
+                        Logger.LogWarning("Error: Negative wait time value in group: " + group.GroupName);
+                }
+                else
+                {
+                    Logger.LogWarning("Error: Duplicate group name in wait groups.");
+                }
+            }
             Instance.Configuration.Save();
         }
 
         protected override void Unload()
         {
-            warpsData.Unload();
+            warpsData = null;
+            Instance.WaitGroups.Clear();
         }
 
         internal static bool CheckUconomy()
@@ -40,7 +68,14 @@ namespace Warps
             return false;
         }
 
-        internal static bool TryCharge(IRocketPlayer player, decimal ammount)
+        internal static void RconPrint(IRocketPlayer caller, string msg)
+        {
+            if (caller is ConsolePlayer)
+                RCONServer.Broadcast(msg);
+            UnturnedChat.Say(caller, msg);
+        }
+
+        internal static bool TryCharge(IRocketPlayer player, decimal ammount, bool checkOnly = false)
         {
             if (Uconomy.Instance.State == PluginState.Loaded)
             {
@@ -51,6 +86,8 @@ namespace Warps
                     decimal balance = Uconomy.Instance.Database.GetBalance(player.Id);
                     if (balance < ammount)
                         UnturnedChat.Say(player, Instance.Translate("insufficient_funds", Uconomy.Instance.Configuration.Instance.MoneyName));
+                    if (balance > ammount && checkOnly)
+                        return true;
                     else
                     {
                         if (Uconomy.Instance.Database.IncreaseBalance(player.Id, -ammount) < 1)
@@ -90,8 +127,12 @@ namespace Warps
                     { "delwarpall_help", CommandDelWarpAll.syntax + " - " + CommandDelWarpAll.help },
                     { "warps_help", CommandWarps.syntax + " - " + CommandWarps.help },
                     { "admin_warp", "You have teleported player: {0}, to warp: {1}." },
-                    { "admin_warp_log", "Admin: {0}({1}), has teleported player: {2}, to warp:{3}" },
+                    { "admin_warp_log", "Admin: {0}({1}), has teleported player: {2}, to warp: {3}" },
                     { "player_warp", "You have been teleported to warp: {0}." },
+                    { "warp_wait", "You'll be warped to {0}, in {1} seconds." },
+                    { "warp_wait_nomovement", "You'll be warped to {0}, in {0} seconds, please don't move." },
+                    { "warp_fail_player_moved", "Warp to {0} failed because you moved." },
+                    { "warp_fail_player_died", "Warp to {0} failed because you died." },
                     { "warp_cant_find_player", "Error: Cant find the player to warp." },
                     { "warp_cant_find_warp", "Error: A warp by the name of {0}, wasn't found." },
                     { "warp_cant_warp_in_car", "Error: Can't warp, player is in a car." },
@@ -106,7 +147,7 @@ namespace Warps
                     { "warps_list_header", "List of warps, There are {0} warps set."},
                     { "warps_list", "Warps: {0}."},
                     { "insufficient_funds", "Error: You don't have enough {0}s to use this command." },
-                    { "charge_success", "You have been charged {0} {1}s, your balance is now {2} {3}s." }
+                    { "charge_success", "You have been charged {0} {1}, your balance is now {2} {3}." }
                 };
             }
         }

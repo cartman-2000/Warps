@@ -15,6 +15,11 @@ namespace Warps
         public decimal SetWarpCost = 200.00m;
         public bool DelWarpChargeEnable = false;
         public decimal DelWarpCost = 200.00m;
+        public bool EnableWaitGroups = false;
+        public bool EnableMovementRestriction = false;
+
+        [XmlArray("WaitGroups"), XmlArrayItem(ElementName = "Group")]
+        public List<WarpWaitGroups> WaitGroups = new List<WarpWaitGroups>();
 
         [XmlArray("Warps"), XmlArrayItem(ElementName = "Warp")]
         public List<Warp> Warps = new List<Warp>();

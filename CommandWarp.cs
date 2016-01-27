@@ -48,7 +48,7 @@ namespace Warps
         {
             if (command.Length == 0 || command.Length > 2)
             {
-                UnturnedChat.Say(caller, Warps.Instance.Translate("warp_help"));
+                Warps.RconPrint(caller, Warps.Instance.Translate("warp_help"));
                 return;
             }
             Warp warp = Warps.warpsData.GetWarp(command[0]);
@@ -59,7 +59,7 @@ namespace Warps
                 {
                     if (unturnedTarget.Stance == EPlayerStance.DRIVING || unturnedTarget.Stance == EPlayerStance.SITTING)
                     {
-                        UnturnedChat.Say(caller, Warps.Instance.Translate("warp_cant_warp_in_car"));
+                        Warps.RconPrint(caller, Warps.Instance.Translate("warp_cant_warp_in_car"));
                         return;
                     }
                     if (Warps.CheckUconomy())
@@ -67,7 +67,7 @@ namespace Warps
                             if (!Warps.TryCharge(caller, Warps.Instance.Configuration.Instance.WarpOtherCost))
                                 return;
                     unturnedTarget.Teleport(warp.Location, warp.Rotation);
-                    UnturnedChat.Say(caller, Warps.Instance.Translate("admin_warp", unturnedTarget.CharacterName, warp.Name));
+                    Warps.RconPrint(caller, Warps.Instance.Translate("admin_warp", unturnedTarget.CharacterName, warp.Name));
                     Logger.Log(Warps.Instance.Translate("admin_warp_log", caller.DisplayName, caller.Id, unturnedTarget.CharacterName, warp.Name));
                     UnturnedChat.Say(unturnedTarget, Warps.Instance.Translate("player_warp", warp.Name));
                     return;
@@ -79,12 +79,12 @@ namespace Warps
                 }
                 if (unturnedTarget == null && command.Length == 2)
                 {
-                    UnturnedChat.Say(caller, Warps.Instance.Translate("warp_cant_find_player"));
+                    Warps.RconPrint(caller, Warps.Instance.Translate("warp_cant_find_player"));
                     return;
                 }
                 else if (caller is ConsolePlayer)
                 {
-                    UnturnedChat.Say(caller, Warps.Instance.Translate("warp_console_no_player"));
+                    Warps.RconPrint(caller, Warps.Instance.Translate("warp_console_no_player"));
                     return;
                 }
                 else
@@ -95,18 +95,31 @@ namespace Warps
                         UnturnedChat.Say(caller, Warps.Instance.Translate("warp_cant_warp_in_car"));
                         return;
                     }
-                    if (Warps.CheckUconomy())
-                        if (Warps.Instance.Configuration.Instance.WarpCargeEnable && Warps.Instance.Configuration.Instance.WarpCost > 0.00m)
-                            if (!Warps.TryCharge(caller, Warps.Instance.Configuration.Instance.WarpCost))
-                                return;
-                    unturnedCaller.Teleport(warp.Location, warp.Rotation);
-                    UnturnedChat.Say(caller, Warps.Instance.Translate("player_warp", warp.Name));
-                    return;
+                    if (Warps.Instance.Configuration.Instance.EnableWaitGroups)
+                    {
+                        if (Warps.CheckUconomy())
+                            if (Warps.Instance.Configuration.Instance.WarpCargeEnable && Warps.Instance.Configuration.Instance.WarpCost > 0.00m)
+                                if (!Warps.TryCharge(caller, Warps.Instance.Configuration.Instance.WarpCost, true))
+                                    return;
+                        WarpsPlayerComponent wpc = unturnedCaller.GetComponent<WarpsPlayerComponent>();
+                        wpc.DoWarp(warp);
+                        return;
+                    }
+                    else
+                    {
+                        if (Warps.CheckUconomy())
+                            if (Warps.Instance.Configuration.Instance.WarpCargeEnable && Warps.Instance.Configuration.Instance.WarpCost > 0.00m)
+                                if (!Warps.TryCharge(caller, Warps.Instance.Configuration.Instance.WarpCost))
+                                    return;
+                        unturnedCaller.Teleport(warp.Location, warp.Rotation);
+                        UnturnedChat.Say(caller, Warps.Instance.Translate("player_warp", warp.Name));
+                        return;
+                    }
                 }
             }
             else
             {
-                UnturnedChat.Say(caller, Warps.Instance.Translate("warp_cant_find_warp", command[0]));
+                Warps.RconPrint(caller, Warps.Instance.Translate("warp_cant_find_warp", command[0]));
                 return;
             }
         }

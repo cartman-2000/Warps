@@ -1,5 +1,4 @@
 ﻿using Rocket.API;
-using Rocket.Unturned.Chat;
 using System.Collections.Generic;
 
 namespace Warps
@@ -43,14 +42,14 @@ namespace Warps
         {
             if (command.Length == 0 || command.Length > 1)
             {
-                UnturnedChat.Say(caller, Warps.Instance.Translate("delwarp_help"));
+                Warps.RconPrint(caller, Warps.Instance.Translate("delwarp_help"));
                 return;
             }
 
             Warp warpData = Warps.warpsData.GetWarp(command[0]);
             if (warpData == null)
             {
-                UnturnedChat.Say(caller, Warps.Instance.Translate("delwarp_not_found"));
+                Warps.RconPrint(caller, Warps.Instance.Translate("delwarp_not_found"));
                 return;
             }
             else
@@ -60,7 +59,7 @@ namespace Warps
                         if (!Warps.TryCharge(caller, Warps.Instance.Configuration.Instance.DelWarpCost))
                             return;
                 Warps.warpsData.RemoveWarp(command[0]);
-                UnturnedChat.Say(caller, Warps.Instance.Translate("delwarp_removed"));
+                Warps.RconPrint(caller, Warps.Instance.Translate("delwarp_removed"));
                 return;
             }
         }

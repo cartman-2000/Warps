@@ -81,6 +81,8 @@
     <Compile Include="Warps.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WarpsConfig.cs" />
+    <Compile Include="WarpsPlayerComponent.cs" />
+    <Compile Include="WarpWaitGroups.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
