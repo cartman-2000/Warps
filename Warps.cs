@@ -8,6 +8,7 @@ using System;
 using fr34kyn01535.Uconomy;
 using System.Collections.Generic;
 using Rocket.Core.RCON;
+using Rocket.Core;
 
 namespace Warps
 {
@@ -70,7 +71,7 @@ namespace Warps
 
         internal static void RconPrint(IRocketPlayer caller, string msg)
         {
-            if (caller is ConsolePlayer)
+            if (caller is ConsolePlayer && R.Settings.Instance.RCON.Enabled && Instance.Configuration.Instance.PrintToRCON)
                 RCONServer.Broadcast(msg);
             UnturnedChat.Say(caller, msg);
         }

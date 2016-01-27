@@ -6,6 +6,7 @@ namespace Warps
 {
     public class WarpsConfig : IRocketPluginConfiguration
     {
+        public bool PrintToRCON = false;
         public bool UconomyEnable = false;
         public bool WarpCargeEnable = true;
         public decimal WarpCost = 100.00m;
