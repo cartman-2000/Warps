@@ -131,7 +131,7 @@ namespace Warps
                     { "admin_warp_log", "Admin: {0}({1}), has teleported player: {2}, to warp: {3}" },
                     { "player_warp", "You have been teleported to warp: {0}." },
                     { "warp_wait", "You'll be warped to {0}, in {1} seconds." },
-                    { "warp_wait_nomovement", "You'll be warped to {0}, in {0} seconds, please don't move." },
+                    { "warp_wait_nomovement", "You'll be warped to {0}, in {1} seconds, please don't move." },
                     { "warp_fail_player_moved", "Warp to {0} failed because you moved." },
                     { "warp_fail_player_died", "Warp to {0} failed because you died." },
                     { "warp_cant_find_player", "Error: Cant find the player to warp." },
