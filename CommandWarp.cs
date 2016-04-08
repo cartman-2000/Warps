@@ -48,7 +48,7 @@ namespace Warps
         {
             if (command.Length == 0 || command.Length > 2)
             {
-                Warps.RconPrint(caller, Warps.Instance.Translate("warp_help"));
+                UnturnedChat.Say(caller, Warps.Instance.Translate("warp_help"));
                 return;
             }
             Warp warp = Warps.warpsData.GetWarp(command[0]);
@@ -59,7 +59,7 @@ namespace Warps
                 {
                     if (unturnedTarget.Stance == EPlayerStance.DRIVING || unturnedTarget.Stance == EPlayerStance.SITTING)
                     {
-                        Warps.RconPrint(caller, Warps.Instance.Translate("warp_cant_warp_in_car"));
+                        UnturnedChat.Say(caller, Warps.Instance.Translate("warp_cant_warp_in_car"));
                         return;
                     }
                     if (Warps.CheckUconomy())
@@ -67,7 +67,7 @@ namespace Warps
                             if (!Warps.TryCharge(caller, Warps.Instance.Configuration.Instance.WarpOtherCost))
                                 return;
                     unturnedTarget.Teleport(warp.Location, warp.Rotation);
-                    Warps.RconPrint(caller, Warps.Instance.Translate("admin_warp", unturnedTarget.CharacterName, warp.Name));
+                    UnturnedChat.Say(caller, Warps.Instance.Translate("admin_warp", unturnedTarget.CharacterName, warp.Name));
                     Logger.Log(Warps.Instance.Translate("admin_warp_log", caller.DisplayName, caller.Id, unturnedTarget.CharacterName, warp.Name));
                     UnturnedChat.Say(unturnedTarget, Warps.Instance.Translate("player_warp", warp.Name));
                     return;
@@ -79,12 +79,12 @@ namespace Warps
                 }
                 if (unturnedTarget == null && command.Length == 2)
                 {
-                    Warps.RconPrint(caller, Warps.Instance.Translate("warp_cant_find_player"));
+                    UnturnedChat.Say(caller, Warps.Instance.Translate("warp_cant_find_player"));
                     return;
                 }
                 else if (caller is ConsolePlayer)
                 {
-                    Warps.RconPrint(caller, Warps.Instance.Translate("warp_console_no_player"));
+                    UnturnedChat.Say(caller, Warps.Instance.Translate("warp_console_no_player"));
                     return;
                 }
                 else
@@ -119,7 +119,7 @@ namespace Warps
             }
             else
             {
-                Warps.RconPrint(caller, Warps.Instance.Translate("warp_cant_find_warp", command[0]));
+                UnturnedChat.Say(caller, Warps.Instance.Translate("warp_cant_find_warp", command[0]));
                 return;
             }
         }

@@ -10,6 +10,11 @@ namespace Warps
     {
         public Warp() { }
 
+        public string GetKey()
+        {
+            return World.ToLower() + "." + Name.ToLower();
+        }
+
         [XmlAttribute]
         public string Name { get; set; }
         [XmlAttribute]

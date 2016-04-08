@@ -6,7 +6,6 @@ namespace Warps
 {
     public class WarpsConfig : IRocketPluginConfiguration
     {
-        public bool PrintToRCON = false;
         public bool UconomyEnable = false;
         public bool WarpCargeEnable = true;
         public decimal WarpCost = 100.00m;
@@ -25,6 +24,18 @@ namespace Warps
         [XmlArray("Warps"), XmlArrayItem(ElementName = "Warp")]
         public List<Warp> Warps = new List<Warp>();
 
-        public void LoadDefaults() {}
+        public void LoadDefaults()
+        {
+            // Populate the WaitGroups list with groups, if it is empty.
+            if (WaitGroups.Count == 0)
+            {
+                WaitGroups = new List<WarpWaitGroups>
+                {
+                    new WarpWaitGroups("default", 10),
+                    new WarpWaitGroups("admin", 5),
+                    new WarpWaitGroups("all", 10)
+                };
+            }
+        }
     }
 }

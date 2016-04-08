@@ -29,17 +29,17 @@ namespace Warps
                         Logger.LogWarning("Error: No warp name on record, Skipping!");
                         continue;
                     }
-                    if (warpData.SetterCharName == null)
-                        warpData.SetterCharName = "";
-                    if (warpData.SetterSteamName == null)
-                        warpData.SetterSteamName = "";
                     if (warpData.World == null || warpData.World == string.Empty)
                     {
                         Logger.LogWarning("Error: No world set to record, Skipping!");
                         continue;
                     }
+                    if (warpData.SetterCharName == null)
+                        warpData.SetterCharName = "";
+                    if (warpData.SetterSteamName == null)
+                        warpData.SetterSteamName = "";
 
-                    WarpsData.Add(warpData.World.ToLower() + "." + warpData.Name.ToLower(), warpData);
+                    WarpsData.Add(warpData.GetKey(), warpData);
                 }
                 catch (Exception ex)
                 {
@@ -79,11 +79,11 @@ namespace Warps
         {
             try
             {
-                if (WarpsData.ContainsKey(WarpsKey(warpData.Name)))
+                if (WarpsData.ContainsKey(warpData.GetKey()))
                 {
-                    WarpsData.Remove(WarpsKey(warpData.Name));
+                    WarpsData.Remove(warpData.GetKey());
                 }
-                WarpsData.Add(WarpsKey(warpData.Name), warpData);
+                WarpsData.Add(warpData.GetKey(), warpData);
                 SaveWarps();
                 return true;
             }
@@ -94,11 +94,11 @@ namespace Warps
             }
         }
 
-        public bool RemoveWarp(string name)
+        public bool RemoveWarp(string key)
         {
-            if (WarpsData.ContainsKey(WarpsKey(name)))
+            if (WarpsData.ContainsKey(key))
             {
-                WarpsData.Remove(WarpsKey(name));
+                WarpsData.Remove(key);
                 SaveWarps();
                 return true;
             }
@@ -112,17 +112,12 @@ namespace Warps
             {
                 foreach ( Warp entry in list)
                 {
-                    WarpsData.Remove(entry.World.ToLower() + "." + entry.Name.ToLower());
+                    WarpsData.Remove(entry.GetKey());
                 }
                 SaveWarps();
                 return list.Count;
             }
             return 0;
-        }
-
-        private string WarpsKey(string name)
-        {
-            return Warps.MapName + "." + name.ToLower();
         }
     }
 }

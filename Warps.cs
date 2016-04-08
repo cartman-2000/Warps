@@ -7,8 +7,6 @@ using SDG.Unturned;
 using System;
 using fr34kyn01535.Uconomy;
 using System.Collections.Generic;
-using Rocket.Core.RCON;
-using Rocket.Core;
 
 namespace Warps
 {
@@ -17,28 +15,20 @@ namespace Warps
         public static Warps Instance;
         internal static WarpDataManager warpsData = null;
         internal static readonly string MapName = Provider.map.ToLower();
-        internal Dictionary<string, float> WaitGroups = new Dictionary<string, float>();
+        internal static Dictionary<string, float> WaitGroups = new Dictionary<string, float>();
 
         protected override void Load()
         {
             Instance = this;
             warpsData = new WarpDataManager();
-            // Populate Wait Groups.
-            if (Warps.Instance.Configuration.Instance.WaitGroups.Count == 0)
-            {
-                Instance.Configuration.Instance.WaitGroups = new List<WarpWaitGroups>()
-                {
-                    new WarpWaitGroups { GroupName = "default", WaitTime = 10 },
-                    new WarpWaitGroups { GroupName = "admin", WaitTime = 5 },
-                    new WarpWaitGroups { GroupName = "all", WaitTime = 10 }
-                };
-            }
+            // Populate Wait Groups, if they're empty.
+            Instance.Configuration.Instance.LoadDefaults();
             foreach (WarpWaitGroups group in Instance.Configuration.Instance.WaitGroups)
             {
-                if (!Instance.WaitGroups.ContainsKey(group.GroupName))
+                if (!WaitGroups.ContainsKey(group.GroupName))
                 {
                     if (group.WaitTime >= 0)
-                        Instance.WaitGroups.Add(group.GroupName, group.WaitTime);
+                        WaitGroups.Add(group.GroupName, group.WaitTime);
                     else
                         Logger.LogWarning("Error: Negative wait time value in group: " + group.GroupName);
                 }
@@ -53,7 +43,7 @@ namespace Warps
         protected override void Unload()
         {
             warpsData = null;
-            Instance.WaitGroups.Clear();
+            WaitGroups.Clear();
         }
 
         internal static bool CheckUconomy()
@@ -64,16 +54,9 @@ namespace Warps
                 {
                     return true;
                 }
-                Logger.LogWarning("Warps: Error: Uconomy plugin wasn't found on the server.");
+                Logger.LogWarning("Error: Uconomy plugin wasn't found on the server.");
             }
             return false;
-        }
-
-        internal static void RconPrint(IRocketPlayer caller, string msg)
-        {
-            if (caller is ConsolePlayer && R.Settings.Instance.RCON.Enabled && Instance.Configuration.Instance.PrintToRCON)
-                RCONServer.Broadcast(msg);
-            UnturnedChat.Say(caller, msg);
         }
 
         internal static bool TryCharge(IRocketPlayer player, decimal ammount, bool checkOnly = false)
@@ -86,14 +69,19 @@ namespace Warps
                         return true;
                     decimal balance = Uconomy.Instance.Database.GetBalance(player.Id);
                     if (balance < ammount)
+                    {
                         UnturnedChat.Say(player, Instance.Translate("insufficient_funds", Uconomy.Instance.Configuration.Instance.MoneyName));
+                        return false;
+                    }
                     if (balance > ammount && checkOnly)
                         return true;
                     else
                     {
-                        if (Uconomy.Instance.Database.IncreaseBalance(player.Id, -ammount) < 1)
+                        if (Uconomy.Instance.Database.IncreaseBalance(player.Id, -ammount) < 0)
                         {
-                            Logger.LogWarning("Warps: Error: Wasn't able to set the player balance.");
+                            Logger.LogWarning("Warning: Player has negative balance after charge, undoing charge.");
+                            Uconomy.Instance.Database.IncreaseBalance(player.Id, ammount);
+                            return false;
                         }
                         else
                         {
@@ -104,16 +92,15 @@ namespace Warps
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogException(ex, "Warps: Error: There was an error trying to charge the player.");
+                    Logger.LogException(ex, "Error: There was an error trying to charge the player.");
                     return true;
                 }
             }
             else
             {
-                Logger.LogWarning("Warps: Error: The Uconomy plugin isn't enabled.");
+                Logger.LogWarning("Error: The Uconomy plugin isn't enabled.");
                 return true;
             }
-            return false;
         }
 
         public override TranslationList DefaultTranslations

@@ -5,8 +5,6 @@ using Rocket.Unturned.Chat;
 using Rocket.Unturned.Player;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 
 namespace Warps
@@ -35,8 +33,8 @@ namespace Warps
             List<RocketPermissionsGroup> groups = R.Permissions.GetGroups(Player, false);
             if (groups.Count != 0)
             {
-                if (!Warps.Instance.WaitGroups.TryGetValue(groups[0].Id, out timetoWait))
-                    if (!Warps.Instance.WaitGroups.TryGetValue("all", out timetoWait))
+                if (!Warps.WaitGroups.TryGetValue(groups[0].Id, out timetoWait))
+                    if (!Warps.WaitGroups.TryGetValue("all", out timetoWait))
                     {
                         Logger.LogWarning("Error: Was Unable to get time to wait on player, using default of 10 seconds.");
                         timetoWait = 10;

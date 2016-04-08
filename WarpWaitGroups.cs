@@ -1,18 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
 namespace Warps
 {
     public class WarpWaitGroups
     {
         public WarpWaitGroups () { }
+        internal WarpWaitGroups(string gName, float wTime)
+        {
+            GroupName = gName;
+            WaitTime = wTime;
+        }
 
         [XmlAttribute]
-        public string GroupName { get; set; }
+        public string GroupName;
         [XmlAttribute]
-        public float WaitTime { get; set; }
+        public float WaitTime;
     }
 }
