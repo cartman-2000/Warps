@@ -5,7 +5,6 @@ using Rocket.Unturned.Chat;
 using Rocket.Unturned.Player;
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Warps
 {
@@ -14,7 +13,7 @@ namespace Warps
         private bool doWarp;
         private DateTime startTime;
         private Warp wData;
-        private Vector3 lastLocation;
+        private UnityEngine.Vector3 lastLocation;
         private float timetoWait;
 
         protected override void Load()
