@@ -67,23 +67,23 @@ namespace Warps
 
         public List<Warp> SearchWarps(CSteamID cSteamID)
         {
-            return WarpsData.Values.Where(warpData => warpData.SetterCSteamID == cSteamID && warpData.World.ToLower() == Warps.MapName).OrderBy(warp => warp.Name).ToList();
+            return WarpsData.Values.Where(warpData => warpData.SetterCSteamID == cSteamID && warpData.World.Sanitze().ToLower() == Warps.MapName.Sanitze().ToLower()).OrderBy(warp => warp.Name).ToList();
         }
 
         public Warp GetWarp(string name)
         {
-            return WarpsData.Values.FirstOrDefault(warpData => warpData.Name.ToLower() == name.ToLower() && warpData.World.ToLower() == Warps.MapName);
+            return WarpsData.Values.FirstOrDefault(warpData => warpData.Name.Sanitze().ToLower() == name.Sanitze().ToLower() && warpData.World.Sanitze().ToLower() == Warps.MapName.Sanitze().ToLower());
         }
 
         public bool SetWarp(Warp warpData)
         {
             try
             {
-                if (WarpsData.ContainsKey(warpData.GetKey()))
+                if (WarpsData.ContainsKey(warpData.GetKey().Sanitze()))
                 {
-                    WarpsData.Remove(warpData.GetKey());
+                    WarpsData.Remove(warpData.GetKey().Sanitze());
                 }
-                WarpsData.Add(warpData.GetKey(), warpData);
+                WarpsData.Add(warpData.GetKey().Sanitze(), warpData);
                 SaveWarps();
                 return true;
             }
@@ -96,9 +96,9 @@ namespace Warps
 
         public bool RemoveWarp(string key)
         {
-            if (WarpsData.ContainsKey(key))
+            if (WarpsData.ContainsKey(key.Sanitze()))
             {
-                WarpsData.Remove(key);
+                WarpsData.Remove(key.Sanitze());
                 SaveWarps();
                 return true;
             }

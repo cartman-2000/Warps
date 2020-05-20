@@ -10,16 +10,11 @@ namespace Warps
 {
     public class WarpsPlayerComponent : UnturnedPlayerComponent
     {
-        private bool doWarp;
+        private bool doWarp = false;
         private DateTime startTime;
         private Warp wData;
         private UnityEngine.Vector3 lastLocation;
-        private float timetoWait;
-
-        protected override void Load()
-        {
-            doWarp = false;
-        }
+        private float timetoWait = 10;
 
         internal void DoWarp(Warp WData)
         {
@@ -75,8 +70,22 @@ namespace Warps
                     if (Warps.CheckUconomy())
                         if (Warps.Instance.Configuration.Instance.WarpCargeEnable && Warps.Instance.Configuration.Instance.WarpCost > 0.00m)
                             if (!Warps.TryCharge(Player, Warps.Instance.Configuration.Instance.WarpCost))
+                            {
+                                doWarp = false;
                                 return;
-                    Player.Teleport(wData.Location, wData.Rotation);
+                            }
+                    if (!Player.Player.teleportToLocation(wData.Location, wData.Rotation))
+                    {
+                        if (Player.IsAdmin)
+                        {
+                            Player.Player.teleportToLocationUnsafe(wData.Location, wData.Rotation);
+                            doWarp = false;
+                            return;
+                        }
+                        UnturnedChat.Say(Player, Warps.Instance.Translate("warp_obstructed"));
+                        doWarp = false;
+                        return;
+                    }
                     UnturnedChat.Say(Player, Warps.Instance.Translate("player_warp", wData.Name));
                     doWarp = false;
                 }

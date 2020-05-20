@@ -56,7 +56,7 @@ namespace Warps
 
             Warp warpData = new Warp();
             UnturnedPlayer unturnedCaller = (UnturnedPlayer)caller;
-            warpData.Name = warpName;
+            warpData.Name = warpName.Sanitze();
             warpData.SetterCharName = unturnedCaller.CharacterName.Sanitze();
             warpData.SetterSteamName = unturnedCaller.SteamName.Sanitze();
             warpData.SetterCSteamID = unturnedCaller.CSteamID;

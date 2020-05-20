@@ -55,7 +55,7 @@ namespace Warps
             UnturnedPlayer unturnedTarget = command.GetUnturnedPlayerParameter(1);
             if (warp != null)
             {
-                if (unturnedTarget != null && (caller.HasPermission("warp.other") || SteamAdminlist.checkAdmin(caller is ConsolePlayer ? CSteamID.Nil : (CSteamID)ulong.Parse(caller.Id))))
+                if (unturnedTarget != null && (caller.HasPermission("warp.other") || caller.IsAdmin || caller is ConsolePlayer))
                 {
                     if (unturnedTarget.Stance == EPlayerStance.DRIVING || unturnedTarget.Stance == EPlayerStance.SITTING)
                     {
@@ -66,7 +66,7 @@ namespace Warps
                         if (Warps.Instance.Configuration.Instance.WarpOtherChargeEnable && Warps.Instance.Configuration.Instance.WarpOtherCost > 0.00m)
                             if (!Warps.TryCharge(caller, Warps.Instance.Configuration.Instance.WarpOtherCost))
                                 return;
-                    unturnedTarget.Teleport(warp.Location, warp.Rotation);
+                    unturnedTarget.Player.teleportToLocationUnsafe(warp.Location, warp.Rotation);
                     UnturnedChat.Say(caller, Warps.Instance.Translate("admin_warp", unturnedTarget.CharacterName, warp.Name));
                     Logger.Log(Warps.Instance.Translate("admin_warp_log", caller.DisplayName, caller.Id, unturnedTarget.CharacterName, warp.Name));
                     UnturnedChat.Say(unturnedTarget, Warps.Instance.Translate("player_warp", warp.Name));
@@ -111,7 +111,16 @@ namespace Warps
                             if (Warps.Instance.Configuration.Instance.WarpCargeEnable && Warps.Instance.Configuration.Instance.WarpCost > 0.00m)
                                 if (!Warps.TryCharge(caller, Warps.Instance.Configuration.Instance.WarpCost))
                                     return;
-                        unturnedCaller.Teleport(warp.Location, warp.Rotation);
+                        if (unturnedCaller.Player.teleportToLocation(warp.Location, warp.Rotation))
+                        {
+                            if (caller.IsAdmin)
+                            {
+                                unturnedCaller.Player.teleportToLocationUnsafe(warp.Location, warp.Rotation);
+                                return;
+                            }
+                            UnturnedChat.Say(Warps.Instance.Translate("warp_obstructed"));
+                            return;
+                        }
                         UnturnedChat.Say(caller, Warps.Instance.Translate("player_warp", warp.Name));
                         return;
                     }

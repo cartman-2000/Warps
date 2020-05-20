@@ -126,6 +126,7 @@ namespace Warps
                     { "warp_cant_warp_in_car", "Error: Can't warp, player is in a car." },
                     { "warp_other_not_allowed", "Error: Warping other players not allowed." },
                     { "warp_console_no_player", "Error: Can't use warp command without a player from the console." },
+                    { "warp_obstructed", "Error: Can't teleport to warp, location obstructed by nearby elements." },
                     { "setwarp_set", "Warp has been set." },
                     { "setwarp_not_set", "Error: Wasn't able to set warp." },
                     { "delwarp_removed", "Warp has been removed." },
