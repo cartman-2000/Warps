@@ -111,14 +111,14 @@ namespace Warps
                             if (Warps.Instance.Configuration.Instance.WarpCargeEnable && Warps.Instance.Configuration.Instance.WarpCost > 0.00m)
                                 if (!Warps.TryCharge(caller, Warps.Instance.Configuration.Instance.WarpCost))
                                     return;
-                        if (unturnedCaller.Player.teleportToLocation(warp.Location, warp.Rotation))
+                        if (!unturnedCaller.Player.teleportToLocation(warp.Location, warp.Rotation))
                         {
                             if (caller.IsAdmin)
                             {
                                 unturnedCaller.Player.teleportToLocationUnsafe(warp.Location, warp.Rotation);
                                 return;
                             }
-                            UnturnedChat.Say(Warps.Instance.Translate("warp_obstructed"));
+                            UnturnedChat.Say(caller, Warps.Instance.Translate("warp_obstructed"));
                             return;
                         }
                         UnturnedChat.Say(caller, Warps.Instance.Translate("player_warp", warp.Name));
